@@ -82,9 +82,10 @@ void QuanLyNhanSu::ghiNhanChamCong(vector<ChamCong>& dsCC, const ChamCong& cc) {
 }
 
 BangLuong QuanLyNhanSu::lapBangLuong(const NhanVien& nv, const ChucDanh& cd,
-                                     const vector<ChamCong>& dsCC, int thang, int nam) const {
+                                     const vector<ChamCong>& dsCC, const vector<DonNghiPhep>& dsDon,
+                                     int thang, int nam) const {
     BangLuong bl("BL" + nv.getMaNV() + "_" + soThanhChuoi(thang) + "_" + soThanhChuoi(nam),
                  nv.getMaNV(), thang, nam);
-    bl.tinhLuong(nv, cd, dsCC);
+    bl.tinhLuong(nv, cd, dsCC, dsDon);
     return bl;
 }

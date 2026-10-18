@@ -42,8 +42,9 @@ void ChamCong::ghiNhanCong(const string& gv, const string& gr) {
     gioRa = gr;
     int vao = chuyenPhut(gv);
     int ra = chuyenPhut(gr);
-    diMuon = vao > GIO_VAO_CHUAN ? vao - GIO_VAO_CHUAN : 0;
-    veSom = ra < GIO_RA_CHUAN ? GIO_RA_CHUAN - ra : 0;
+    // Đi muộn chỉ tính cho ca làm việc trong giờ hành chính (vào trước giờ ra chuẩn 17:00)
+    diMuon = (vao > GIO_VAO_CHUAN && vao < GIO_RA_CHUAN) ? vao - GIO_VAO_CHUAN : 0;
+    veSom = (ra < GIO_RA_CHUAN && ra > GIO_VAO_CHUAN) ? GIO_RA_CHUAN - ra : 0;
     // Tăng ca tính từ max(giờ vào, 17:00): đến lúc 18:00 thì chỉ tính từ 18:00
     int batDauTangCa = vao > GIO_RA_CHUAN ? vao : GIO_RA_CHUAN;
     soGioTangCa = ra > batDauTangCa ? (ra - batDauTangCa) / 60.0 : 0.0;
@@ -51,9 +52,20 @@ void ChamCong::ghiNhanCong(const string& gv, const string& gr) {
 
 double ChamCong::tinhGioLam() const {
     if (gioVao.empty() || gioRa.empty()) return 0;
-    double h = (chuyenPhut(gioRa) - chuyenPhut(gioVao)) / 60.0;
-    if (h > 5) h = h - 1;   // trừ 1 giờ nghỉ trưa
-    return h < 0 ? 0 : h;
+    int vao = chuyenPhut(gioVao);
+    int ra = chuyenPhut(gioRa);
+    if (ra <= vao) return 0;
+
+    int tongPhut = ra - vao;
+    // Khoảng nghỉ trưa chuẩn: 12:00 (720 phút) đến 13:00 (780 phút)
+    int batDauNghi = 12 * 60;
+    int ketThucNghi = 13 * 60;
+    int giaoDau = vao > batDauNghi ? vao : batDauNghi;
+    int giaoCuoi = ra < ketThucNghi ? ra : ketThucNghi;
+    if (giaoCuoi > giaoDau) {
+        tongPhut -= (giaoCuoi - giaoDau); // Chỉ trừ đúng khoảng thời gian trùng với giờ nghỉ trưa
+    }
+    return tongPhut > 0 ? (tongPhut / 60.0) : 0;
 }
 
 double ChamCong::tinhCong() const {

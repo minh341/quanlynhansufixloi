@@ -45,7 +45,7 @@ double BangLuong::tinhThueTNCN(double t) const {
     return thue + (t - truoc) * suat[6];
 }
 
-void BangLuong::tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<ChamCong>& dsCC) {
+void BangLuong::tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<ChamCong>& dsCC, const vector<DonNghiPhep>& dsDon) {
     double luongHD = cd.getLuongCoBan();
     double gioTangCa = 0;
     soNgayCong = 0;
@@ -53,6 +53,18 @@ void BangLuong::tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<C
         if (dsCC[i].getMaNV() == nv.getMaNV() && dsCC[i].getThang() == thang && dsCC[i].getNam() == nam) {
             soNgayCong = soNgayCong + dsCC[i].tinhCong();   // công tính theo giờ làm
             gioTangCa = gioTangCa + dsCC[i].getSoGioTangCa();
+        }
+    }
+    // Nghỉ phép năm đã duyệt: người lao động được hưởng nguyên lương (tính vào ngày công)
+    for (int i = 0; i < (int)dsDon.size(); i++) {
+        if (dsDon[i].getMaNV() == nv.getMaNV() &&
+            dsDon[i].getLoaiPhep() == "Phep nam" &&
+            dsDon[i].getTrangThai() == DA_DUYET) {
+            int thangDon = dsDon[i].getTuNgay().size() >= 5 ? atoi(dsDon[i].getTuNgay().substr(3, 2).c_str()) : 0;
+            int namDon = dsDon[i].getTuNgay().size() >= 10 ? atoi(dsDon[i].getTuNgay().substr(6, 4).c_str()) : 0;
+            if (thangDon == thang && namDon == nam) {
+                soNgayCong += dsDon[i].getSoNgay();
+            }
         }
     }
     if (soNgayCong > NGAY_CONG_CHUAN) soNgayCong = NGAY_CONG_CHUAN;

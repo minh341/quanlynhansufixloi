@@ -5,6 +5,7 @@
 #include "NhanVien.h"
 #include "ChucDanh.h"
 #include "ChamCong.h"
+#include "DonNghiPhep.h"
 using namespace std;
 
 // [Chương 2] Bảng lương tháng của 1 nhân viên.
@@ -34,7 +35,8 @@ public:
     double getSoNgayCong() const;
     double getThucNhan() const;
 
-    void tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<ChamCong>& dsCC);
+    void tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<ChamCong>& dsCC,
+                   const vector<DonNghiPhep>& dsDon = vector<DonNghiPhep>());
     void inPhieuLuong() const;
 };
 

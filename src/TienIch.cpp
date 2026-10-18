@@ -95,3 +95,29 @@ bool hopLeGio(const string& s) {
     int m = atoi(s.substr(3, 2).c_str());
     return h >= 0 && h < 24 && m >= 0 && m < 60;
 }
+
+long long ngaySangSo(const string& s) {
+    if (!hopLeNgay(s)) return -1;
+    int d = atoi(s.substr(0, 2).c_str());
+    int m = atoi(s.substr(3, 2).c_str());
+    int y = atoi(s.substr(6, 4).c_str());
+
+    long long tongNgay = d;
+    for (int nam = 1900; nam < y; nam++) {
+        bool nhuan = (nam % 4 == 0 && nam % 100 != 0) || (nam % 400 == 0);
+        tongNgay += nhuan ? 366 : 365;
+    }
+    for (int thang = 1; thang < m; thang++) {
+        tongNgay += soNgayTrongThang(thang, y);
+    }
+    return tongNgay;
+}
+
+int soSanhNgay(const string& ngay1, const string& ngay2) {
+    long long n1 = ngaySangSo(ngay1);
+    long long n2 = ngaySangSo(ngay2);
+    if (n1 > n2) return 1;
+    if (n1 < n2) return -1;
+    return 0;
+}
+

@@ -56,6 +56,7 @@ int NhanVien::demNhanVien() { return soDoiTuong; }
 // ---- Getter ----
 string NhanVien::getMaNV() const { return maNV; }
 string NhanVien::getHoTen() const { return hoTen; }
+string NhanVien::getCCCD() const { return cccd; }
 string NhanVien::getMaPB() const { return maPB; }
 string NhanVien::getMaCD() const { return maCD; }
 string NhanVien::getTrangThai() const { return trangThai; }
