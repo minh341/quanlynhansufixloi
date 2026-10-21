@@ -41,6 +41,7 @@ public:
     // ---- Getter ----
     string getMaNV() const;
     string getHoTen() const;
+    string getCCCD() const;
     string getMaPB() const;
     string getMaCD() const;
     string getTrangThai() const;

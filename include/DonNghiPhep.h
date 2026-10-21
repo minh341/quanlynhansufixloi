@@ -23,6 +23,8 @@ public:
     string getMaDon() const;
     string getMaNV() const;
     string getLoaiPhep() const;   // "Phep nam", "Nghi om", "Viec rieng"
+    string getTuNgay() const;
+    string getDenNgay() const;
     int getSoNgay() const;
     TrangThaiDon getTrangThai() const;
     void setTrangThai(TrangThaiDon tt);

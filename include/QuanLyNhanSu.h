@@ -5,6 +5,7 @@
 #include "BangLuong.h"
 #include "ChamCong.h"
 #include "ChucDanh.h"
+#include "DonNghiPhep.h"
 
 // [Chương 3] KẾ THỪA public từ NhanVien: bổ sung thuộc tính chuyenMon và quyền quản trị
 //            hồ sơ nhân viên, chấm công, lương.
@@ -37,7 +38,8 @@ public:
     // ---- Chấm công và lương ----
     void ghiNhanChamCong(vector<ChamCong>& dsCC, const ChamCong& cc);   // ghi đè nếu trùng ngày
     BangLuong lapBangLuong(const NhanVien& nv, const ChucDanh& cd,
-                           const vector<ChamCong>& dsCC, int thang, int nam) const;
+                           const vector<ChamCong>& dsCC, const vector<DonNghiPhep>& dsDon,
+                           int thang, int nam) const;
 };
 
 #endif

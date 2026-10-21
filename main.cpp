@@ -248,7 +248,7 @@ void xemBangLuongCuaToi(DuLieu& d, NhanVien* user) {
     const ChucDanh* cd = timCD(d, user->getMaCD());
     if (cd == NULL) { cout << "Chua co chuc danh hop le.\n"; return; }
     BangLuong bl("BL" + user->getMaNV(), user->getMaNV(), thang, nam);
-    bl.tinhLuong(*user, *cd, d.dsCC);
+    bl.tinhLuong(*user, *cd, d.dsCC, d.dsDon);
     if (bl.getSoNgayCong() <= 0) cout << "Chua co du lieu cham cong thang nay.\n";
     else bl.inPhieuLuong();
 }
@@ -258,9 +258,37 @@ void guiDonNghiPhep(DuLieu& d, NhanVien* user) {
     cout << "Phep con lai: " << user->soNgayPhepConLai() << " ngay\n";
     int loai = nhapSo("Loai phep (1=Phep nam, 2=Nghi om, 3=Viec rieng): ", 1, 3);
     string ten[4] = {"", "Phep nam", "Nghi om", "Viec rieng"};
-    string tu = nhapNgay("Tu ngay (dd/mm/yyyy): ");
-    string den = nhapNgay("Den ngay (dd/mm/yyyy): ");
-    int soNgay = nhapSo("So ngay nghi (1-30): ", 1, 30);
+    string tu, den;
+    while (true) {
+        tu = nhapNgay("Tu ngay (dd/mm/yyyy): ");
+        den = nhapNgay("Den ngay (dd/mm/yyyy): ");
+        if (soSanhNgay(tu, den) > 0) {
+            cout << "  [Loi] Ngay bat dau khong duoc sau ngay ket thuc. Nhap lai.\n";
+            continue;
+        }
+        break;
+    }
+    long long kc = ngaySangSo(den) - ngaySangSo(tu) + 1;
+    int soNgay = nhapSo("So ngay nghi (1-" + soThanhChuoi(kc) + "): ", 1, (int)kc);
+
+    // Chặn nộp phép năm vượt quá quỹ phép còn lại
+    if (loai == 1 && soNgay > user->soNgayPhepConLai()) {
+        cout << "  [Loi] Ban chi con " << user->soNgayPhepConLai()
+             << " ngay phep nam. Khong the xin nghi " << soNgay << " ngay.\n";
+        return;
+    }
+
+    // Kiểm tra trùng lặp khoảng thời gian với các đơn đã có
+    for (int i = 0; i < (int)d.dsDon.size(); i++) {
+        if (d.dsDon[i].getMaNV() == user->getMaNV() && d.dsDon[i].getTrangThai() != TU_CHOI) {
+            if (!(soSanhNgay(den, d.dsDon[i].getTuNgay()) < 0 || soSanhNgay(tu, d.dsDon[i].getDenNgay()) > 0)) {
+                cout << "  [Loi] Khoang thoi gian nay trung lap voi don " << d.dsDon[i].getMaDon()
+                     << " (" << d.dsDon[i].trangThaiString() << ").\n";
+                return;
+            }
+        }
+    }
+
     string lyDo = nhapDong("Ly do: ");
     int lonNhat = 0;   // mã đơn mới = số lớn nhất đang có + 1 (không trùng kể cả khi đã xóa bớt đơn)
     for (int i = 0; i < (int)d.dsDon.size(); i++) {
@@ -326,14 +354,53 @@ void themNhanVien(DuLieu& d, QuanLyNhanSu* ql) {
     string ma = nhapDong("Ma NV: ");
     if (ma.empty()) return;
     if (timNV(d, ma) != NULL) { cout << "Ma nhan vien da ton tai.\n"; return; }
-    string ten = nhapDong("Ho ten: ");
+    
+    string ten;
+    while (true) {
+        ten = nhapDong("Ho ten: ");
+        if (!ten.empty()) break;
+        cout << "  [Loi] Ho ten khong duoc de trong. Nhap lai!\n";
+    }
+
     string ns = nhapNgay("Ngay sinh (dd/mm/yyyy): ");
     string gt = nhapDong("Gioi tinh: ");
-    string cccd = nhapDong("CCCD: ");
+
+    string cccd;
+    while (true) {
+        cccd = nhapDong("CCCD (12 chu so): ");
+        bool hopLe = (cccd.size() == 12);
+        for (int i = 0; i < (int)cccd.size(); i++)
+            if (cccd[i] < '0' || cccd[i] > '9') hopLe = false;
+        if (!hopLe) {
+            cout << "  [Loi] CCCD phai gom dung 12 chu so. Nhap lai!\n";
+            continue;
+        }
+        bool trung = false;
+        for (int i = 0; i < (int)d.dsNV.size(); i++) {
+            if (d.dsNV[i]->getCCCD() == cccd) { trung = true; break; }
+        }
+        if (trung) {
+            cout << "  [Loi] CCCD nay da ton tai trong he thong. Nhap lai!\n";
+            continue;
+        }
+        break;
+    }
+
     string dc = nhapDong("Dia chi: ");
     string sdt = nhapDong("So dien thoai: ");
     string mail = nhapDong("Email: ");
-    string nvl = nhapNgay("Ngay vao lam (dd/mm/yyyy): ");
+
+    string nvl;
+    while (true) {
+        nvl = nhapNgay("Ngay vao lam (dd/mm/yyyy): ");
+        long long kc = ngaySangSo(nvl) - ngaySangSo(ns);
+        if (kc < 18 * 365) {
+            cout << "  [Loi] Nhan vien phai tu du 18 tuoi tai thoi diem vao lam. Nhap lai!\n";
+            continue;
+        }
+        break;
+    }
+
     string maPB = nhapDong("Ma phong ban: ");
     PhongBan* pb = timPB(d, maPB);
     if (pb == NULL) { cout << "Phong ban khong ton tai.\n"; return; }
@@ -464,11 +531,15 @@ void menuChamCong(DuLieu& d, QuanLyNhanSu* ql) {
         try {
             NhanVien* nv = timNV(d, nhapDong("Ma NV: "));
             if (nv == NULL) { cout << "Khong tim thay nhan vien.\n"; continue; }
+            if (nv->getTrangThai() == "Da nghi") {
+                cout << "  [Loi] Nhan vien nay da thoi viec, khong the cham cong.\n";
+                continue;
+            }
             if (c == 1) {
                 string ngay = nhapNgay("Ngay (dd/mm/yyyy): ");
                 string vao = nhapGio("Gio vao (HH:MM): ");
                 string ra = nhapGio("Gio ra (HH:MM): ");
-                if (ra <= vao) { cout << "Gio ra phai sau gio vao.\n"; continue; }
+                if (ra <= vao) { cout << "  [Loi] Gio ra phai sau gio vao.\n"; continue; }
                 ChamCong cc("CC" + nv->getMaNV() + "_" + ngay, nv->getMaNV(), ngay);
                 cc.ghiNhanCong(vao, ra);
                 ql->ghiNhanChamCong(d.dsCC, cc);
@@ -505,7 +576,7 @@ void lapBangLuongTatCa(DuLieu& d, QuanLyNhanSu* ql) {
     for (int i = 0; i < (int)d.dsNV.size(); i++) {
         const ChucDanh* cd = timCD(d, d.dsNV[i]->getMaCD());
         if (cd == NULL) continue;
-        BangLuong bl = ql->lapBangLuong(*d.dsNV[i], *cd, d.dsCC, thang, nam);
+        BangLuong bl = ql->lapBangLuong(*d.dsNV[i], *cd, d.dsCC, d.dsDon, thang, nam);
         cout << left << setw(8) << d.dsNV[i]->getMaNV() << setw(24) << d.dsNV[i]->getHoTen()
              << setw(12) << dinhDangCong(bl.getSoNgayCong());
         inTien(cout, bl.getThucNhan());
@@ -571,7 +642,7 @@ void baoCaoLuong(DuLieu& d, BanGiamDoc* bgd) {
         const ChucDanh* cd = timCD(d, d.dsNV[i]->getMaCD());
         if (cd == NULL) continue;
         BangLuong bl("BL" + d.dsNV[i]->getMaNV(), d.dsNV[i]->getMaNV(), thang, nam);
-        bl.tinhLuong(*d.dsNV[i], *cd, d.dsCC);
+        bl.tinhLuong(*d.dsNV[i], *cd, d.dsCC, d.dsDon);
         ds.push_back(bl);
     }
     bgd->xemBaoCaoLuong(ds);
@@ -579,11 +650,9 @@ void baoCaoLuong(DuLieu& d, BanGiamDoc* bgd) {
 
 // ---------------- Phien lam viec sau khi dang nhap ----------------
 void phienLamViec(DuLieu& d, NhanVien* user) {
-    // [Chuong 4] Nhan biet lop that su qua ham ao loaiNhanVien(), roi ep kieu con tro lop co so ve lop dan xuat
-    QuanLyNhanSu* ql = NULL;
-    BanGiamDoc* bgd = NULL;
-    if (user->loaiNhanVien() == LOAI_QLNS) ql = (QuanLyNhanSu*)user;
-    else if (user->loaiNhanVien() == LOAI_BGD) bgd = (BanGiamDoc*)user;
+    // [Chuong 4] Da hinh: dung dynamic_cast de ep kieu con tro an toan tu lop co so ve lop dan xuat
+    QuanLyNhanSu* ql = dynamic_cast<QuanLyNhanSu*>(user);
+    BanGiamDoc* bgd = dynamic_cast<BanGiamDoc*>(user);
 
     while (true) {
         tieuDe("HRMS - " + user->getHoTen() + " (" + user->vaiTro() + ")");
@@ -652,6 +721,10 @@ int main() {
             if (ma.empty()) break;
             NhanVien* user = timNV(d, ma);
             if (user == NULL) { cout << "Khong tim thay ma nhan vien.\n"; continue; }
+            if (user->getTrangThai() == "Da nghi") {
+                cout << "Tai khoan da bi khoa: Nhan vien nay da thoi viec!\n";
+                continue;
+            }
             phienLamViec(d, user);
         }
     } catch (int) {

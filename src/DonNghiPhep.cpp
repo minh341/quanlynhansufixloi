@@ -20,6 +20,8 @@ DonNghiPhep::DonNghiPhep(const string& maDon, const string& maNV, const string& 
 string DonNghiPhep::getMaDon() const { return maDon; }
 string DonNghiPhep::getMaNV() const { return maNV; }
 string DonNghiPhep::getLoaiPhep() const { return loaiPhep; }
+string DonNghiPhep::getTuNgay() const { return tuNgay; }
+string DonNghiPhep::getDenNgay() const { return denNgay; }
 int DonNghiPhep::getSoNgay() const { return soNgay; }
 TrangThaiDon DonNghiPhep::getTrangThai() const { return trangThai; }
 void DonNghiPhep::setTrangThai(TrangThaiDon tt) { trangThai = tt; }

@@ -14,5 +14,7 @@ int tach(const string& dong, char c, string f[], int toiDa);  // tách 1 dòng t
 int soNgayTrongThang(int thang, int nam);   // có xét năm nhuận
 bool hopLeNgay(const string& s);            // đúng dạng dd/mm/yyyy và là ngày có thật trong lịch
 bool hopLeGio(const string& s);             // đúng dạng HH:MM
+long long ngaySangSo(const string& s);       // đổi ngày sang số ngày tính từ 01/01/1900
+int soSanhNgay(const string& ngay1, const string& ngay2); // >0 nếu ngay1 > ngay2; =0 nếu bằng; <0 nếu ngay1 < ngay2
 
 #endif
