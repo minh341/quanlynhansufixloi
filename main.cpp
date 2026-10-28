@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 //  HE THONG QUAN LY NHAN SU (HRMS) - Bai tap lon OOP (C++)
 //  Dang nhap bang ma nhan vien; menu thay doi theo vai tro.
 //
@@ -268,8 +268,8 @@ void guiDonNghiPhep(DuLieu& d, NhanVien* user) {
         }
         break;
     }
-    long long kc = ngaySangSo(den) - ngaySangSo(tu) + 1;
-    int soNgay = nhapSo("So ngay nghi (1-" + soThanhChuoi(kc) + "): ", 1, (int)kc);
+    int soNgay = (int)(ngaySangSo(den) - ngaySangSo(tu) + 1);
+    cout << "  -> So ngay nghi (tu dong tinh): " << soNgay << " ngay\n";
 
     // Chặn nộp phép năm vượt quá quỹ phép còn lại
     if (loai == 1 && soNgay > user->soNgayPhepConLai()) {
