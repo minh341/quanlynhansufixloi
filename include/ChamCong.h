@@ -4,16 +4,14 @@
 #include <iostream>
 using namespace std;
 
-// [Chương 2] Một bản ghi chấm công của 1 nhân viên trong 1 ngày.
-// Giờ lưu dạng "HH:MM"; số phút đi muộn / về sớm / tăng ca tự tính từ ca chuẩn 08:00 - 17:00.
 class ChamCong {
 private:
-    string maCC, maNV, ngay;      // ngày: "dd/mm/yyyy"
-    string gioVao, gioRa;         // "HH:MM"
+    string maCC, maNV, ngay;
+    string gioVao, gioRa;
     double soGioTangCa;
-    int diMuon, veSom;            // đơn vị: phút
+    int diMuon, veSom;
 
-    static int chuyenPhut(const string& hhmm);   // phương thức tĩnh: "08:30" -> 510
+    static int chuyenPhut(const string& hhmm);
 
 public:
     ChamCong();
@@ -27,9 +25,9 @@ public:
     int getDiMuon() const;
     int getVeSom() const;
 
-    void ghiNhanCong(const string& gioVao, const string& gioRa);   // tự tính muộn / sớm / tăng ca
-    double tinhGioLam() const;    // trừ 1 giờ nghỉ trưa nếu làm trên 5 giờ
-    double tinhCong() const;      // 1 công (>= 7 giờ làm), 0.5 công (>= 3.5 giờ), còn lại 0
+    void ghiNhanCong(const string& gioVao, const string& gioRa);
+    double tinhGioLam() const;
+    double tinhCong() const;
 
     void hienThi() const;
     void ghiFile(ostream& os) const;

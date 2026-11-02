@@ -4,11 +4,10 @@
 #include <iostream>
 using namespace std;
 
-// [Chương 2] Lớp ChucDanh: lương cơ bản và phụ cấp theo chức danh.
 class ChucDanh {
 private:
     string maCD, tenCD;
-    double luongCoBan;       // lương cơ bản theo hợp đồng (tháng)
+    double luongCoBan;
     double phuCapChucDanh;
 
 public:

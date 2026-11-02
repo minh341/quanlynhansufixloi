@@ -2,10 +2,10 @@
 #include <cstdlib>
 #include <iomanip>
 
-const int GIO_VAO_CHUAN = 8 * 60;    // 08:00 (tính bằng phút từ 0h)
-const int GIO_RA_CHUAN = 17 * 60;    // 17:00
-const double GIO_LAM_DU_CONG = 7;        // làm từ 7 giờ (đã trừ nghỉ trưa) tính 1 công
-const double GIO_LAM_NUA_CONG = 3.5;     // làm từ 3.5 giờ tính 0.5 công
+const int GIO_VAO_CHUAN = 8 * 60;
+const int GIO_RA_CHUAN = 17 * 60;
+const double GIO_LAM_DU_CONG = 7;
+const double GIO_LAM_NUA_CONG = 3.5;
 
 ChamCong::ChamCong() {
     soGioTangCa = 0;
@@ -22,7 +22,6 @@ ChamCong::ChamCong(const string& maCC, const string& maNV, const string& ngay) {
     veSom = 0;
 }
 
-// "HH:MM" -> số phút kể từ 0h (giờ đã được kiểm tra đúng dạng trước khi gọi)
 int ChamCong::chuyenPhut(const string& hhmm) {
     int h = (hhmm[0] - '0') * 10 + (hhmm[1] - '0');
     int m = (hhmm[3] - '0') * 10 + (hhmm[4] - '0');
@@ -42,10 +41,8 @@ void ChamCong::ghiNhanCong(const string& gv, const string& gr) {
     gioRa = gr;
     int vao = chuyenPhut(gv);
     int ra = chuyenPhut(gr);
-    // Đi muộn chỉ tính cho ca làm việc trong giờ hành chính (vào trước giờ ra chuẩn 17:00)
     diMuon = (vao > GIO_VAO_CHUAN && vao < GIO_RA_CHUAN) ? vao - GIO_VAO_CHUAN : 0;
     veSom = (ra < GIO_RA_CHUAN && ra > GIO_VAO_CHUAN) ? GIO_RA_CHUAN - ra : 0;
-    // Tăng ca tính từ max(giờ vào, 17:00): đến lúc 18:00 thì chỉ tính từ 18:00
     int batDauTangCa = vao > GIO_RA_CHUAN ? vao : GIO_RA_CHUAN;
     soGioTangCa = ra > batDauTangCa ? (ra - batDauTangCa) / 60.0 : 0.0;
 }
@@ -57,13 +54,12 @@ double ChamCong::tinhGioLam() const {
     if (ra <= vao) return 0;
 
     int tongPhut = ra - vao;
-    // Khoảng nghỉ trưa chuẩn: 12:00 (720 phút) đến 13:00 (780 phút)
     int batDauNghi = 12 * 60;
     int ketThucNghi = 13 * 60;
     int giaoDau = vao > batDauNghi ? vao : batDauNghi;
     int giaoCuoi = ra < ketThucNghi ? ra : ketThucNghi;
     if (giaoCuoi > giaoDau) {
-        tongPhut -= (giaoCuoi - giaoDau); // Chỉ trừ đúng khoảng thời gian trùng với giờ nghỉ trưa
+        tongPhut -= (giaoCuoi - giaoDau);
     }
     return tongPhut > 0 ? (tongPhut / 60.0) : 0;
 }

@@ -23,7 +23,7 @@ void PhongBan::themNhanVien(NhanVien* nv) {
 bool PhongBan::xoaNhanVien(const string& maNV) {
     for (int i = 0; i < (int)dsNhanVien.size(); i++) {
         if (dsNhanVien[i]->getMaNV() == maNV) {
-            dsNhanVien.erase(dsNhanVien.begin() + i);   // chỉ gỡ con trỏ, không delete
+            dsNhanVien.erase(dsNhanVien.begin() + i);
             return true;
         }
     }
@@ -38,7 +38,7 @@ void PhongBan::hienThiDanhSach() const {
         return;
     }
     for (int i = 0; i < (int)dsNhanVien.size(); i++)
-        cout << "  " << *dsNhanVien[i] << "\n";   // operator<< gọi vaiTro() ảo
+        cout << "  " << *dsNhanVien[i] << "\n";
 }
 
 void PhongBan::hienThiThongTin() const {
