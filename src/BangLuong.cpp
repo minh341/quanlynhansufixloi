@@ -1,13 +1,13 @@
 #include "BangLuong.h"
 #include "TienIch.h"
 
-const int NGAY_CONG_CHUAN = 26;             // số ngày công chuẩn của 1 tháng
-const double GIAM_TRU_BAN_THAN = 11000000;  // giảm trừ gia cảnh bản thân (chỉnh theo quy định hiện hành)
-const double TL_BHXH = 0.08;                // tỷ lệ bảo hiểm tính trên lương hợp đồng
+const int NGAY_CONG_CHUAN = 26;
+const double GIAM_TRU_BAN_THAN = 11000000;
+const double TL_BHXH = 0.08;
 const double TL_BHYT = 0.015;
 const double TL_BHTN = 0.01;
 const double HE_SO_TANG_CA = 1.5;
-const double NGAY_CONG_TOI_THIEU_BH = 14;   // dưới mức này thì không trích bảo hiểm tháng đó
+const double NGAY_CONG_TOI_THIEU_BH = 14;
 
 BangLuong::BangLuong() {
     thang = 0; nam = 0; soNgayCong = 0;
@@ -31,7 +31,6 @@ int BangLuong::getNam() const { return nam; }
 double BangLuong::getSoNgayCong() const { return soNgayCong; }
 double BangLuong::getThucNhan() const { return thucNhan; }
 
-// Thuế lũy tiến từng phần (7 bậc: 5%, 10%, 15%, 20%, 25%, 30%, 35%)
 double BangLuong::tinhThueTNCN(double t) const {
     if (t <= 0) return 0;
     double moc[6] = {5000000, 10000000, 18000000, 32000000, 52000000, 80000000};
@@ -51,11 +50,10 @@ void BangLuong::tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<C
     soNgayCong = 0;
     for (int i = 0; i < (int)dsCC.size(); i++) {
         if (dsCC[i].getMaNV() == nv.getMaNV() && dsCC[i].getThang() == thang && dsCC[i].getNam() == nam) {
-            soNgayCong = soNgayCong + dsCC[i].tinhCong();   // công tính theo giờ làm
+            soNgayCong = soNgayCong + dsCC[i].tinhCong();
             gioTangCa = gioTangCa + dsCC[i].getSoGioTangCa();
         }
     }
-    // Nghỉ phép năm đã duyệt: người lao động được hưởng nguyên lương (tính vào ngày công)
     for (int i = 0; i < (int)dsDon.size(); i++) {
         if (dsDon[i].getMaNV() == nv.getMaNV() &&
             dsDon[i].getLoaiPhep() == "Phep nam" &&
@@ -68,27 +66,27 @@ void BangLuong::tinhLuong(const NhanVien& nv, const ChucDanh& cd, const vector<C
         }
     }
     if (soNgayCong > NGAY_CONG_CHUAN) soNgayCong = NGAY_CONG_CHUAN;
-    if (soNgayCong <= 0) {   // không có công -> không có lương
+    if (soNgayCong <= 0) {
         luongCoBan = 0; phuCap = 0; tienTangCa = 0;
         bhxh = 0; bhyt = 0; bhtn = 0; thueTNCN = 0; thucNhan = 0;
         return;
     }
 
     luongCoBan = luongHD * soNgayCong / NGAY_CONG_CHUAN;
-    phuCap = cd.getPhuCap() + nv.tinhPhuCapQuanLy();   // ĐA HÌNH: hàm ảo, tùy loại nhân viên
+    phuCap = cd.getPhuCap() + nv.tinhPhuCapQuanLy();
     tienTangCa = gioTangCa * (luongHD / NGAY_CONG_CHUAN / 8.0) * HE_SO_TANG_CA;
     if (soNgayCong >= NGAY_CONG_TOI_THIEU_BH) {
         bhxh = luongHD * TL_BHXH;
         bhyt = luongHD * TL_BHYT;
         bhtn = luongHD * TL_BHTN;
     } else {
-        bhxh = 0; bhyt = 0; bhtn = 0;   // làm quá ít công: không trích bảo hiểm
+        bhxh = 0; bhyt = 0; bhtn = 0;
     }
 
     double chiuThue = luongCoBan + phuCap + tienTangCa - (bhxh + bhyt + bhtn) - GIAM_TRU_BAN_THAN;
     thueTNCN = tinhThueTNCN(chiuThue);
     thucNhan = luongCoBan + phuCap + tienTangCa - (bhxh + bhyt + bhtn) - thueTNCN;
-    if (thucNhan < 0) thucNhan = 0;   // lương thực nhận không bao giờ âm
+    if (thucNhan < 0) thucNhan = 0;
 }
 
 void BangLuong::inPhieuLuong() const {

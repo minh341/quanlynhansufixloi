@@ -8,7 +8,7 @@ string soThanhChuoi(long long n) {
     if (am) n = -n;
     string s = "";
     while (n > 0) {
-        s = char('0' + n % 10) + s;   // thêm chữ số vào đầu chuỗi
+        s = char('0' + n % 10) + s;
         n = n / 10;
     }
     if (am) s = "-" + s;
@@ -17,11 +17,11 @@ string soThanhChuoi(long long n) {
 
 void inTien(ostream& os, double so) {
     long long v;
-    if (so < 0) v = -(long long)(-so + 0.5);   // làm tròn đến đồng
+    if (so < 0) v = -(long long)(-so + 0.5);
     else v = (long long)(so + 0.5);
     string s = soThanhChuoi(v < 0 ? -v : v);
     for (int i = (int)s.size() - 3; i > 0; i -= 3)
-        s.insert(i, ",");                      // chèn dấu phẩy mỗi 3 chữ số
+        s.insert(i, ",");
     if (v < 0) os << "-";
     os << s;
 }
@@ -50,7 +50,7 @@ int tach(const string& dong, char c, string f[], int toiDa) {
     while (dem < toiDa) {
         size_t vt = dong.find(c, dau);
         if (vt == string::npos) {
-            f[dem++] = dong.substr(dau);   // trường cuối cùng (có thể rỗng)
+            f[dem++] = dong.substr(dau);
             break;
         }
         f[dem++] = dong.substr(dau, vt - dau);
@@ -82,7 +82,7 @@ bool hopLeNgay(const string& s) {
     int m = atoi(s.substr(3, 2).c_str());
     int y = atoi(s.substr(6, 4).c_str());
     if (m < 1 || m > 12 || y < 1900 || y > 2100) return false;
-    return d >= 1 && d <= soNgayTrongThang(m, y);   // loại 31/02, 31/04, 29/02 năm thường...
+    return d >= 1 && d <= soNgayTrongThang(m, y);
 }
 
 bool hopLeGio(const string& s) {
@@ -120,4 +120,3 @@ int soSanhNgay(const string& ngay1, const string& ngay2) {
     if (n1 < n2) return -1;
     return 0;
 }
-

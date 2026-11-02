@@ -1,7 +1,7 @@
 #include "NhanVien.h"
 #include <iomanip>
 
-int NhanVien::soDoiTuong = 0;   // định nghĩa thành phần tĩnh bên ngoài lớp
+int NhanVien::soDoiTuong = 0;
 
 NhanVien::NhanVien() {
     trangThai = "Dang lam";
@@ -53,7 +53,6 @@ NhanVien::~NhanVien() { soDoiTuong--; }
 
 int NhanVien::demNhanVien() { return soDoiTuong; }
 
-// ---- Getter ----
 string NhanVien::getMaNV() const { return maNV; }
 string NhanVien::getHoTen() const { return hoTen; }
 string NhanVien::getCCCD() const { return cccd; }
@@ -63,7 +62,6 @@ string NhanVien::getTrangThai() const { return trangThai; }
 int NhanVien::getSoNgayPhepNam() const { return soNgayPhepNam; }
 int NhanVien::soNgayPhepConLai() const { return soNgayPhepNam - soNgayPhepDaDung; }
 
-// ---- Setter ----
 void NhanVien::setHoTen(const string& ten) { hoTen = ten; }
 void NhanVien::setDiaChi(const string& dc) { diaChi = dc; }
 void NhanVien::setSoDienThoai(const string& sdt) { soDienThoai = sdt; }
@@ -74,14 +72,12 @@ void NhanVien::setTrangThai(const string& tt) { trangThai = tt; }
 void NhanVien::setSoNgayPhepNam(int n) { soNgayPhepNam = n; }
 void NhanVien::setSoNgayPhepDaDung(int n) { soNgayPhepDaDung = n; }
 
-// ---- Nghiệp vụ ----
 bool NhanVien::truPhep(int soNgay) {
     if (soNgay <= 0 || soNgay > soNgayPhepConLai()) return false;
     soNgayPhepDaDung += soNgay;
     return true;
 }
 
-// ---- Các hàm ảo ----
 void NhanVien::xemThongTin() const {
     cout << "----------- HO SO NHAN VIEN -----------\n"
          << "Ma NV          : " << maNV << "\n"
