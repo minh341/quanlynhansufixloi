@@ -5,6 +5,8 @@
 #include "NhanVien.h"
 using namespace std;
 
+// [Chương 2] Quan hệ TẬP HỢP (aggregation) với NhanVien: phòng ban giữ vector con trỏ
+// tới nhân viên nhưng KHÔNG sở hữu (hàm hủy / xóa phòng ban không delete nhân viên).
 class PhongBan {
 private:
     string maPB, tenPB, moTa;
@@ -19,10 +21,10 @@ public:
     void setTenPB(const string& ten);
     void setMoTa(const string& mt);
 
-    void themNhanVien(NhanVien* nv);
-    bool xoaNhanVien(const string& maNV);
+    void themNhanVien(NhanVien* nv);          // throw nếu null / trùng
+    bool xoaNhanVien(const string& maNV);     // chỉ gỡ con trỏ, không delete
     int soLuongNhanVien() const;
-    void hienThiDanhSach() const;
+    void hienThiDanhSach() const;             // [Chương 4] gọi hàm ảo vaiTro() qua con trỏ lớp cơ sở
     void hienThiThongTin() const;
     void ghiFile(ostream& os) const;
 };

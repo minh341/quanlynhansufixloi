@@ -31,10 +31,12 @@ void BanGiamDoc::ghiFile(ostream& os) const {
     os << "|" << capQuanLy << "\n";
 }
 
+// [Chương 6] Các điều kiện không hợp lệ được báo bằng throw, nơi gọi dùng try / catch.
 void BanGiamDoc::pheDuyetNghiPhep(DonNghiPhep& don, NhanVien& nguoiGui) {
     if (don.getMaNV() != nguoiGui.getMaNV()) throw "Don khong thuoc nhan vien nay.";
     if (nguoiGui.getMaNV() == getMaNV()) throw "Khong the tu duyet don cua chinh minh.";
     if (don.getTrangThai() != CHO_DUYET) throw "Don nay da duoc xu ly.";
+    // Chỉ "Phep nam" mới trừ vào quỹ phép năm; nghỉ ốm / việc riêng được duyệt mà không trừ
     bool truPhepNam = (don.getLoaiPhep() == "Phep nam");
     if (truPhepNam && nguoiGui.soNgayPhepConLai() < don.getSoNgay()) throw "Khong du phep nam de duyet don nay.";
     don.pheDuyet();

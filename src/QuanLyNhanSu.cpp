@@ -3,6 +3,7 @@
 
 QuanLyNhanSu::QuanLyNhanSu() {}
 
+// Danh sách khởi tạo gọi hàm tạo sao chép của lớp cơ sở
 QuanLyNhanSu::QuanLyNhanSu(const NhanVien& nv, const string& chuyenMon) : NhanVien(nv) {
     this->chuyenMon = chuyenMon;
 }
@@ -11,7 +12,7 @@ string QuanLyNhanSu::getChuyenMon() const { return chuyenMon; }
 void QuanLyNhanSu::setChuyenMon(const string& cm) { chuyenMon = cm; }
 
 void QuanLyNhanSu::xemThongTin() const {
-    NhanVien::xemThongTin();
+    NhanVien::xemThongTin();   // gọi hàm của lớp cơ sở bằng toán tử ::
     cout << "Chuyen mon     : " << chuyenMon << "\n";
 }
 
@@ -21,7 +22,7 @@ double QuanLyNhanSu::tinhPhuCapQuanLy() const { return 2000000; }
 
 void QuanLyNhanSu::ghiFile(ostream& os) const {
     os << "QL|";
-    ghiTruongCoBan(os);
+    ghiTruongCoBan(os);   // dùng giao diện protected của lớp cơ sở
     os << "|" << chuyenMon << "\n";
 }
 
@@ -58,11 +59,12 @@ bool QuanLyNhanSu::suaNhanVien(const vector<NhanVien*>& ds, const string& maNV) 
     return true;
 }
 
+// Lưu ý: hàm này giải phóng đối tượng (delete); nơi gọi phải gỡ nhân viên khỏi PhongBan trước.
 bool QuanLyNhanSu::xoaNhanVien(vector<NhanVien*>& ds, const string& maNV) {
     for (int i = 0; i < (int)ds.size(); i++) {
         if (ds[i]->getMaNV() == maNV) {
-            delete ds[i];
-            ds.erase(ds.begin() + i);
+            delete ds[i];                     // hàm hủy ảo -> hủy đúng loại đối tượng
+            ds.erase(ds.begin() + i);         // gỡ con trỏ khỏi vector
             return true;
         }
     }
@@ -72,7 +74,7 @@ bool QuanLyNhanSu::xoaNhanVien(vector<NhanVien*>& ds, const string& maNV) {
 void QuanLyNhanSu::ghiNhanChamCong(vector<ChamCong>& dsCC, const ChamCong& cc) {
     for (int i = 0; i < (int)dsCC.size(); i++) {
         if (dsCC[i].getMaNV() == cc.getMaNV() && dsCC[i].getNgay() == cc.getNgay()) {
-            dsCC[i] = cc;
+            dsCC[i] = cc;   // đã có bản ghi cùng ngày -> ghi đè
             return;
         }
     }

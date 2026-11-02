@@ -6,10 +6,12 @@ using namespace std;
 
 enum TrangThaiDon { CHO_DUYET, DA_DUYET, TU_CHOI };
 
+// [Chương 2] Đơn xin nghỉ phép: nhân viên gửi -> Ban Giám đốc duyệt / từ chối.
+// [Chương 6] pheDuyet() và tuChoi() ném ngoại lệ (throw) nếu đơn đã được xử lý.
 class DonNghiPhep {
 private:
     string maDon, maNV, loaiPhep;
-    string tuNgay, denNgay, lyDo;
+    string tuNgay, denNgay, lyDo;   // "dd/mm/yyyy"
     int soNgay;
     TrangThaiDon trangThai;
 
@@ -20,7 +22,7 @@ public:
 
     string getMaDon() const;
     string getMaNV() const;
-    string getLoaiPhep() const;
+    string getLoaiPhep() const;   // "Phep nam", "Nghi om", "Viec rieng"
     string getTuNgay() const;
     string getDenNgay() const;
     int getSoNgay() const;
@@ -28,9 +30,9 @@ public:
     void setTrangThai(TrangThaiDon tt);
     string trangThaiString() const;
 
-    void guiDon();
-    void pheDuyet();
-    void tuChoi();
+    void guiDon();       // đặt trạng thái = chờ duyệt
+    void pheDuyet();     // throw nếu đơn không ở trạng thái chờ duyệt
+    void tuChoi();       // throw nếu đơn không ở trạng thái chờ duyệt
 
     void hienThi() const;
     void ghiFile(ostream& os) const;
